@@ -1,188 +1,244 @@
-//promises
+//axios globals
+axios.defaults.headers.common["X-Auth-Token"] =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+//!get tokens from jwt.io
+// GET REQUEST
+function getTodos() {
+  // there are couple of ways to make get requests
+  //1. axios
+  // axios({
+  //   method: "get",
+  //   url: "https://jsonplaceholder.typicode.com/todos",
+  //   params: {
+  //     _limit: 5,
+  //   },
+  //   })
+  //go to json placeholder and paste the url of todos or anything u want
+  //   .then((res) => showOutput(res)) //this returns a promise so .then
+  //   .catch((err) => console.log(err)); //for error handling
+  //when u click get u can see things stored in an obj and all data are stored in an array of the todos we need to fetch
+  // request is stored in the form of XMLHTTPREQUEST ; if u use node js it will be CLIENT request instance
+  // showOutput  shows this in browser window
+  //  this is long method
 
-// console.log("person1: shows ticket");
-// console.log("person2: shows ticket");
+  // instead we can do
 
-// const promiseWifeBringingTicks = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     resolve("ticket");
-//   }, 3000);
-// });
+  axios
+    .get("https://jsonplaceholder.typicode.com/todos?_limit=5", {
+      timeout: 5000, // extra functionality u can set time out
+    }) //attaching params after ? is better way to write params
+    .then((res) => showOutput(res))
+    .catch((err) => console.log(err));
+}
 
-// const getPopcorn = promiseWifeBringingTicks.then((t) => {
-//   console.log("wife: i have the tics");
-//   console.log("husband: we should go in ");
-//   console.log("wife: no i am hungry ");
-//   return new Promise((resolve, reject) => resolve(`${t} popcorn`));
-// });
+// POST REQUEST
+function addTodo() {
+  axios
+    .post("https://jsonplaceholder.typicode.com/todos", {
+      title: "New Todo",
+      completed: false,
+    })
+    .then((res) => showOutput(res))
+    .catch((err) => console.log(err));
+}
 
-// const getButter = getPopcorn.then((t) => {
-//   console.log("husband: i got some popcorn");
-//   console.log("husband: we should go in");
-//   console.log("wife: I need butter on my popcorn");
-//   return new Promise((resolve, reject) => resolve(`${t} butter`));
-// });
+// PUT/PATCH REQUEST  -- put replaces entire resource while  patch does the  update functionality
+function updateTodo() {
+  axios
+    .put("https://jsonplaceholder.typicode.com/todos/1", {
+      title: "Updated todo",
+      completed: true,
+    }) // we need to put id to put/patch or delete request we need to include the id in our case its "1"
+    .then((res) => showOutput(res))
+    .catch((err) => console.log(err));
+}
 
-// const getColdDrinks = getButter.then((t) => {
-//   console.log(`husband:i got some butter on popcorn`);
+// DELETE REQUEST
+function removeTodo() {
+  axios
+    .delete("https://jsonplaceholder.typicode.com/todos/1")
+    // no need to specify data cuz we r simply deleting it just needs id
 
-//   console.log(`wife: I need some cold drinks`);
-//   console.log(`husband: here is your cold drinks`);
-//   console.log(`husband: anything else darling`);
-//   return new Promise((resolve, reject) => resolve(`${t} cold drinks`));
-// });
+    .then((res) => showOutput(res))
+    .catch((err) => console.log(err));
+}
 
-// getColdDrinks.then((t) => console.log(t));
-// console.log(`person4: shows ticket`);
-// console.log(`person5: shows ticket`);
+// SIMULTANEOUS DATA
+//to get simultaneoes data using axios all we can get posts  and todos and others in an array
+function getData() {
+  axios
+    .all([
+      axios.get("https://jsonplaceholder.typicode.com/todos?_limit=5"),
+      axios.get("https://jsonplaceholder.typicode.com/posts?_limit=5"),
+    ])
+    .then(axios.spread((todos, posts) => showOutput(posts)))
+    .catch((err) => console.log(err));
+  //axios.spread used to spread array of arguments into multiple arguments.it prevents error for multiple ajax req with axios
+}
 
-// ASYNC AWAIT
-
-// console.log("person1: shows ticket");
-// console.log("person2: shows ticket");
-
-// const preMovie = async () => {
-//   const promiseWifeBringingTicks = new Promise((resolve, reject) => {
-//     setTimeout(() => resolve("ticket"), 3000);
-//   });
-//   const getPopcorn = new Promise((resolve, reject) => resolve(`popcorn`));
-
-//   const addButter = new Promise((resolve, reject) => resolve(`butter`));
-
-//   const getColdDrinks = new Promise((resolve, reject) => resolve(`colddrinks`));
-
-//   let ticket = await promiseWifeBringingTicks;
-
-//   console.log(`wife:i have the ${ticket}`);
-//   console.log("husband: we should go in");
-//   console.log("wife:no i am hungry ");
-
-//   let popcorn = await getPopcorn;
-
-//   console.log(`husband: i got some ${popcorn}`);
-//   console.log("husband: we should go in");
-//   console.log("wife: I need butter on my popcorn");
-
-//   let butter = await addButter;
-
-//   console.log(`husband:i got some ${butter} on popcorn`);
-//   console.log(`husband: anything else darling`);
-
-//   console.log(`i need colddrinks `);
-
-//   let colddrinks = await getColdDrinks;
-//   console.log(`here is your ${colddrinks} `);
-//   console.log(`anything else darling`);
-//   console.log(`wife: lets go we are getting late`);
-//   console.log(`husband: thank you for the reminder *grins*`);
-
-//   return ticket;
-// };
-
-// preMovie().then((m) => console.log(`person3: shows ticket`));
-
-// console.log(`person4: shows ticket`);
-// console.log(`person5: shows ticket`);
-
-// Promise.all via async await
-
-// const preMovie = async () => {
-//   const promiseWifeBringingTicks = new Promise((resolve, reject) => {
-//     setTimeout(() => reject("ticket"), 3000);
-//   });
-
-//   const getPopcorn = new Promise((resolve, reject) => resolve(`popcorn`));
-
-//   const getCandy = new Promise((resolve, reject) => resolve(`candy`));
-
-//   const getCoke = new Promise((resolve, reject) => resolve(`coke`));
-//   let ticket;
-//   try {
-//     ticket = await promiseWifeBringingTicks;
-//   } catch (error) {
-//     ticket = "sad face";
-//   }
-
-//   let [popcorn, candy, coke] = await Promise.all([
-//     getPopcorn,
-//     getCandy,
-//     getCoke,
-//   ]);
-
-//   console.log(`${popcorn},${candy},${coke}`);
-//   return ticket;
-// };
-
-// preMovie().then((m) => console.log(`persona3 shows ${m}`));
-
-// console.log(`person4: shows ticket`);
-// console.log(`person5: shows ticket`);
-
-//  create post task
-
-const posts = [
-    { title: "Post One", body: "This is post one" },
-    { title: "Post Two", body: "This is post two" },
-  ];
-  
-  function getPosts() {
-    setTimeout(() => {
-      let output = "";
-      posts.forEach((post, index) => {
-        output += `<li>${post.title}</li>`;
-      });
-      document.body.innerHTML = output;
-    }, 1000);
-  }
-  
-  let userActive = [];
-  let user = {
-    userName: "xyz",
-    lastActivetime: 0,
+// CUSTOM HEADERS
+function customHeaders() {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "sometoken",
+    },
   };
-  function updateLasteUseractivityTime() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        user.lastActivetime = new Date().getTime();
-        resolve(user.lastActivetime);
-      }, 1000);
+
+  axios
+    .post(
+      "https://jsonplaceholder.typicode.com/todos",
+      {
+        title: "New Todo",
+        completed: false,
+      },
+      config
+    )
+    .then((res) => showOutput(res))
+    .catch((err) => console.log(err));
+}
+
+// TRANSFORMING REQUESTS & RESPONSES
+//nnot used much
+//can transform ur response or request in certain way
+function transformResponse() {
+  const options = {
+    method: "post",
+    url: "https://jsonplaceholder.typicode.com/todos",
+    data: {
+      title: "Hello World",
+    },
+    transformResponse: axios.defaults.transformResponse.concat((data) => {
+      data.title = data.title.toUpperCase();
+      return data;
+    }),
+  };
+  //transformed the title into uppercase
+  //we will get helloworld in uppercase if we click transform
+
+  axios(options).then((res) => showOutput(res));
+}
+
+// ERROR HANDLING
+function errorHandling() {
+  axios
+    .get("https://jsonplaceholder.typicode.com/todoss", {
+      // validateStatus: function (status) {
+      //   return status < 500; // reject only if status is greater than 500
+      // },
+    })
+    .then((res) => showOutput(res))
+    .catch((err) => {
+      if (err.response) {
+        //if server responded with status other than 200 range(success range)
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+
+        if (err.response.status === 404) {
+          alert("Error: Page not found");
+        }
+      } else if (err.request) {
+        //request was made but no response
+        console.log(err.request);
+      } else {
+        console.log(err.message);
+      }
     });
-  }
-  function creatpost(value) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        user.userName = value;
-        resolve(user.userName);
-        console.log(user);
-      });
+}
+
+// CANCEL TOKEN
+// to cancel requests on the fly
+function cancelToken() {
+  const source = axios.cancelToken.source();
+
+  axios
+    .get("https://jsonplaceholder.typicode.com/todos", {
+      cancelToken: source.token,
+    })
+    .then((res) => showOutput(res))
+    .catch((thrown) => {
+      if (axios.isCancel(thrown)) {
+        console.log("Request cancelled", thrown.message);
+      }
     });
+
+  if (true) {
+    source.cancel("Request cancelled");
   }
-  function deletePost() {
-    return new Promise((resol, reject) => {
-      setTimeout(() => {
-        userActive.pop();
-        resol();
-      }, 1000);
-    });
+}
+
+// INTERCEPTING REQUESTS & RESPONSES
+//how to create interceptors
+//interceptors: allows us to intercept the request and run some functionality like a logger
+axios.interceptors.request.use(
+  (config) => {
+    console.log(
+      `${config.method.toUpperCase()} request sent to ${
+        config.url
+      } at ${new Date().getTime()}`
+    );
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  
-  async function preposts() {
-    try {
-      console.log("sheik bro google waale");
-      let x = await creatpost("feroz");
-      let y = await creatpost("sandeep");
-      let d = await creatpost("sudeep");
-      let r = await creatpost("anu");
-      let l = await updateLasteUseractivityTime();
-      userActive.push(x);
-      userActive.push(y);
-      userActive.push(d);
-      userActive.push(r);
-      userActive.push(l);
-      let m = await deletePost();
-    } catch (err) {
-      console.log("show error ");
-    }
-  }
-  preposts();
-  console.log(userActive);
+);
+
+// AXIOS INSTANCES
+const axiosInstance = axios.create({
+  //you can have other custom settings
+  baseURL: "https://jsonplaceholder.typicode.com",
+});
+
+axiosInstance.get("/comments").then((res) => showOutput(res));
+
+// Show output in browser
+function showOutput(res) {
+  document.getElementById("res").innerHTML = `
+  <div class="card card-body mb-4">
+    <h5>Status: ${res.status}</h5>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      Headers
+    </div>
+    <div class="card-body">
+      <pre>${JSON.stringify(res.headers, null, 2)}</pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      Data
+    </div>
+    <div class="card-body">
+      <pre>${JSON.stringify(res.data, null, 2)}</pre>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-header">
+      Config
+    </div>
+    <div class="card-body">
+      <pre>${JSON.stringify(res.config, null, 2)}</pre>
+    </div>
+  </div>
+`;
+}
+
+// Event listeners
+document.getElementById("get").addEventListener("click", getTodos);
+document.getElementById("post").addEventListener("click", addTodo);
+document.getElementById("update").addEventListener("click", updateTodo);
+document.getElementById("delete").addEventListener("click", removeTodo);
+document.getElementById("sim").addEventListener("click", getData);
+document.getElementById("headers").addEventListener("click", customHeaders);
+document
+  .getElementById("transform")
+  .addEventListener("click", transformResponse);
+document.getElementById("error").addEventListener("click", errorHandling);
+document.getElementById("cancel").addEventListener("click", cancelToken);
